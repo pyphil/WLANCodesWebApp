@@ -1,3 +1,21 @@
 from django.db import models
 
-# Create your models here.
+
+class Code(models.Model):
+    TYPE_CHOICES = [
+        ('h', 'Stunden'),
+        ('d', 'Tage'),
+    ]
+    code = models.CharField(max_length=10)
+    type = models.CharField(max_length=10, choices=TYPE_CHOICES)
+    duration = models.IntegerField()
+
+
+class Student(models.Model):
+    name = models.CharField(max_length=50)
+    firstname = models.CharField(max_length=50)
+    code = models.CharField(max_length=10)
+
+
+class ListDeletion(models.Model):
+    deletecode = models.CharField(max_length=10)
