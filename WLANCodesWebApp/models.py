@@ -14,6 +14,7 @@ class Code(models.Model):
 class Student(models.Model):
     name = models.CharField(max_length=50)
     firstname = models.CharField(max_length=50)
+    group = models.CharField(max_length=3)
     code = models.CharField(max_length=10)
 
 
