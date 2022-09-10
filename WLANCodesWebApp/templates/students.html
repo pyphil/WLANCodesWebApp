@@ -4,9 +4,26 @@
 <h1>Students:</h1>
 
 <form method="post">
-    {% csrf_token %}
-    {{ form.as_table }}
-    <button type="submit" name="" class="btn btn-primary">Speichern</button>
+  {% csrf_token %}
+  <table class="table table-bordered border-secondary">
+    <thead>
+      <th>name</th>
+      <th>firstname</th>
+      <th>group</th>
+      <th>code</th>
+    </thead>
+    <tbody>
+      {% for student in students %}
+        <tr>
+          <td>{{ student.name }}</td>
+          <td>{{ student.firstname }}</td>
+          <td>{{ student.group }}</td>
+          <td>{{ student.code }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <p><button type="submit" class="btn btn-primary">Speichern</button></p>
 </form>
 
 {% endblock content %}
