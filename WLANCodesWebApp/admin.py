@@ -8,12 +8,14 @@ class StudentCustomAdmin(admin.ModelAdmin):
         'name',
         'firstname',
         'group',
+        'email',
         'code',
         )
     list_filter = (
         'name',
         'firstname',
         'group',
+        'email',
         'code',
         )
 

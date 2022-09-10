@@ -13,9 +13,10 @@ class Code(models.Model):
 
 class Student(models.Model):
     name = models.CharField(max_length=50)
-    firstname = models.CharField(max_length=50)
     group = models.CharField(max_length=3)
-    code = models.CharField(max_length=10)
+    firstname = models.CharField(max_length=50)
+    email = models.CharField(max_length=20)
+    code = models.CharField(max_length=20)
 
 
 class ListDeletion(models.Model):
