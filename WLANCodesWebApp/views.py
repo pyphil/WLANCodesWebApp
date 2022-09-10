@@ -41,4 +41,4 @@ def student_import(request):
                     group=item[2],
                     email=item[3]
                 )
-        return redirect('codes')
+        return redirect('students')

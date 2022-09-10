@@ -11,5 +11,6 @@ class StudentForm(ModelForm):
             'firstname',
             'group',
             'email',
+            'date',
             'code',
         )

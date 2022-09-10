@@ -9,6 +9,7 @@ class StudentCustomAdmin(admin.ModelAdmin):
         'firstname',
         'group',
         'email',
+        'date',
         'code',
         )
     list_filter = (
@@ -16,6 +17,7 @@ class StudentCustomAdmin(admin.ModelAdmin):
         'firstname',
         'group',
         'email',
+        'date',
         'code',
         )
 
