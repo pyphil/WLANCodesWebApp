@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Import Students</h1>
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="input" class="form-label">CSV Input Format: <code>Name;Vorname;Klasse;E-Mail</code><br>
+            <br>ohne Kopfzeile in den folgenden Textrahmen kopieren:</label>
+        <textarea class="form-control" name="input" id="input" rows="20"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Importieren</button>
+</form>
+
+{% endblock content %}
