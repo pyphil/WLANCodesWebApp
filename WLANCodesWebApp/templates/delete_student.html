@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Delete Student:</h1>
+<form method="post">
+    {% csrf_token %}
+    Soll folgender Datensatz gelöscht werden?: <br>
+    {{ name }}, {{ firstname }}, {{ group }}
+    <button type="submit" name="delete" value="{{ student_id }}" class="btn btn-danger">Löschen</button>
+</form>
+
+{% endblock content %}
