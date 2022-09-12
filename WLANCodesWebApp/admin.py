@@ -2,7 +2,6 @@ from django.contrib import admin
 from .models import Student
 
 
-
 class StudentCustomAdmin(admin.ModelAdmin):
     list_display = (
         'name',
@@ -20,5 +19,6 @@ class StudentCustomAdmin(admin.ModelAdmin):
         'date',
         'code',
         )
+
 
 admin.site.register(Student, StudentCustomAdmin)
