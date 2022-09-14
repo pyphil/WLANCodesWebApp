@@ -12,6 +12,9 @@ def codeimport(request):
         codes = re.findall(r'\d\d\d\d\d-\d\d\d\d\d', text)
         # TODO Auf Duplikate prüfen
         for code in codes:
-            Code.objects.create(code=code, type='h', duration=1)
-        
+            Code.objects.create(
+                code=code,
+                type=request.POST.get('type'),
+                duration=int(request.POST.get('duration'))
+            )
         return redirect('codeimport')

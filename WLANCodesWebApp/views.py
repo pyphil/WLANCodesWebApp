@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
-from .models import Student
+from .models import Student, Code
 from .forms import StudentForm
+from datetime import datetime
 
 
 def codes(request):
@@ -51,6 +52,18 @@ def students(request):
     students = Student.objects.all()
     if request.method == 'GET':
         return render(request, 'students.html', {'students': students})
+    if request.method == 'POST':
+        id = int(request.POST.get('send'))
+        student = Student.objects.get(id=id)
+        oldcode = student.code
+        # TODO: oldcode on delete list
+        newcode = Code.objects.filter(type='h').first()
+        # TODO delete used code
+        student.code = newcode.code
+        student.date = datetime.today()
+        student.save()
+        # TODO: Send Mail
+        return redirect('students')
 
 
 def student_import(request):

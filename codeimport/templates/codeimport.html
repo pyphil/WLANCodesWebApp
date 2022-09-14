@@ -4,12 +4,25 @@
 <h1>Codeimport:</h1>
 
 <form method="post">
-    {% csrf_token %}
-    <div class="mb-3">
-        <label for="input" class="form-label">Aus dem importierten Text werden Codes in folgendem Format gefiltert und importiert: <code>XXXXX-XXXXX</code></label>
-        <textarea class="form-control" name="codes" id="input" rows="20"></textarea>
+  {% csrf_token %}
+  <div class="row">
+    <div class="col-2">
+      <label for="typeNumber">Dauer</label>
+      <input min="1" max="8" name="duration" type="number" id="typeNumber" class="form-control" />
     </div>
-    <button type="submit" class="btn btn-primary">Importieren</button>
+    <div class="col-3">
+      <label for="typeNumber">Dauer</label>
+      <select class="form-select" name="type" aria-label="Default select example">
+        <!-- <option selected>---</option> -->
+        <option value="h">Stunde(n)</option>
+        <option value="d">Tag(e)</option>
+        <option value="y">Jahr</option>
+      </select>
+    </div>     
+  </div>
+  <label for="input" class="form-label mt-2">Aus dem importierten Text werden Codes in folgendem Format gefiltert und importiert: <code>XXXXX-XXXXX</code></label>
+  <textarea class="form-control" name="codes" id="input" rows="20"></textarea>
+    <button type="submit" class="btn btn-primary mt-2">Importieren</button>
 </form>
 
 {% endblock content %}
