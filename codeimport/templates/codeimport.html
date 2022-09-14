@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Codeimport:</h1>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="input" class="form-label">Aus dem importierten Text werden Codes in folgendem Format gefiltert und importiert: <code>XXXXX-XXXXX</code></label>
+        <textarea class="form-control" name="codes" id="input" rows="20"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Importieren</button>
+</form>
+
+{% endblock content %}

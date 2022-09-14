@@ -1,5 +1,6 @@
+import code
 from django.contrib import admin
-from .models import Student
+from .models import Student, Code
 
 
 class StudentCustomAdmin(admin.ModelAdmin):
@@ -20,5 +21,17 @@ class StudentCustomAdmin(admin.ModelAdmin):
         'code',
         )
 
+class CodesCustomAdmin(admin.ModelAdmin):
+    list_display = (
+        'code', 
+        'type', 
+        'duration',
+    )
+    list_filter = (
+        'code', 
+        'type', 
+        'duration',
+    )
 
 admin.site.register(Student, StudentCustomAdmin)
+admin.site.register(Code, CodesCustomAdmin)
