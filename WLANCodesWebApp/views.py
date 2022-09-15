@@ -57,7 +57,15 @@ def delete_student(request, id=None):
 @login_required
 def students(request):
     if request.method == 'GET':
-        if request.GET.get('sort') == 'date':
+        if request.GET.get('search') is not None:
+            searchterm = str(request.GET.get('search'))
+            print(searchterm)
+            students = (
+                Student.objects.filter(name__icontains=searchterm) | 
+                Student.objects.filter(firstname__icontains=searchterm)
+            )
+            return render(request, 'students.html', {'students': students})
+        elif request.GET.get('sort') == 'date':
             students = Student.objects.all().order_by('-date')
             return render(request, 'students.html', {'students': students})
         elif request.GET.get('sort') == 'code':
@@ -124,14 +132,17 @@ def student_import(request):
         text = request.POST.get('input')
         for line in text.split('\n'):
             item = line.split(';')
-            if Student.objects.filter(email=item[3]):
+            try: 
+                if Student.objects.filter(email=item[3].strip()):
+                    pass
+            except IndexError:
                 pass
             else:
                 # import
                 Student.objects.create(
-                    name=item[0],
-                    firstname=item[1],
-                    group=item[2],
-                    email=item[3],
+                    name=item[0].strip(),
+                    firstname=item[1].strip(),
+                    group=item[2].strip(),
+                    email=item[3].strip(),
                 )
         return redirect('students')

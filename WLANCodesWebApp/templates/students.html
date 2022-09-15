@@ -1,10 +1,20 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1>Students:</h1>
-
+<h1>SII Codes</h1>
+<form>
+  <div class="row mt-2 mb-2">
+    <div class="col-3">
+      <input class="form-control" placeholder="Suche nach Schülernamen" name="search">
+    </div>
+    <div class="col-auto">
+      <button type="submit" class="btn btn-primary">Suchen</button>
+    </div>
+  </div>
+</form>
 <form method="post">
   {% csrf_token %}
+
   <table class="table table-bordered border-secondary">
     <thead>
       <th><a href="/students/">Name</a></th>
