@@ -37,7 +37,7 @@
           <td>{{ student.code }}</td>
           <td>
             <button name="send" value="{{ student.id }}" class="btn btn-primary btn-sm"><i class="bi bi-tag-fill"></i><i class="bi bi-plus"></i><i class="bi bi-envelope-check-fill"></i></button>
-            <a href="{% url 'edit_student' student.id %}" type="button" class="btn btn-secondary btn-sm"><i class="bi bi-pencil-fill"></i></a>
+            <a href="{% url 'edit_student' student.id %}" class="btn btn-secondary btn-sm"><i class="bi bi-pencil-fill"></i></a>
             <a href="{% url 'delete_student' student.id %}" name="delete" class="btn btn-danger btn-sm"><i class="bi bi-trash3-fill"></i></a>
           </td>
         </tr>
@@ -45,8 +45,8 @@
     </tbody>
   </table>
   <table>
-    <td><a href="{% url 'student_import' %}" type="button" class="btn btn-secondary btn-sm">CSV Import</a></td>
-    <td><a href="{% url 'new_student' %}" type="button" class="btn btn-secondary btn-sm">Datensatz manuell hinzufügen</a></td>
+    <td><a href="{% url 'student_import' %}" class="btn btn-secondary btn-sm">CSV Import</a></td>
+    <td><a href="{% url 'new_student' %}" class="btn btn-secondary btn-sm">Datensatz manuell hinzufügen</a></td>
     <td><button type="submit" class="btn btn-primary btn-sm">Neuer Code für alle Datensätze</button></td>
     <td><button type="submit" class="btn btn-primary btn-sm">Alle Codes per E-Mail versenden</button></td>
     <td><button type="submit" class="btn btn-danger btn-sm">Alle Datensätze löschen</button></td>
