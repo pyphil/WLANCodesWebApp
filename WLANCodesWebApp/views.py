@@ -70,7 +70,7 @@ def students(request):
         id = int(request.POST.get('send'))
         student = Student.objects.get(id=id)
         oldcode = student.code
-        # TODO: put oldcode on delete list
+        # put oldcode on delete list
         if oldcode != None:
             CodeDeletion.objects.create(
                 code_to_delete=oldcode,
