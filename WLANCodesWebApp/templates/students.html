@@ -7,12 +7,12 @@
   {% csrf_token %}
   <table class="table table-bordered border-secondary">
     <thead>
-      <th>name</th>
-      <th>firstname</th>
-      <th>group</th>
-      <th>email</th>
-      <th>Ausgabedatum</th>
-      <th>code</th>
+      <th><a href="/students/">Name</a></th>
+      <th>Vorname</th>
+      <th>Stufe</th>
+      <th>E-Mail</th>
+      <th><a href="/students/?sort=date">Ausgabedatum</a></th>
+      <th><a href="/students/?sort=code">Code</a></th>
       <th>Aktionen</th>
 
     </thead>

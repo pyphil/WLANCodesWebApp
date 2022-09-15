@@ -1,6 +1,6 @@
 import code
 from django.contrib import admin
-from .models import Student, Code
+from .models import Student, Code, CodeDeletion
 
 
 class StudentCustomAdmin(admin.ModelAdmin):
@@ -21,17 +21,35 @@ class StudentCustomAdmin(admin.ModelAdmin):
         'code',
         )
 
+
+class CodeDeletionCustomAdmin(admin.ModelAdmin):
+    list_display = (
+        'code_to_delete',
+        'name',
+        'firstname',
+        'group',
+        )
+    list_filter = (
+        'code_to_delete',
+        'name',
+        'firstname',
+        'group',
+        )
+
+
 class CodesCustomAdmin(admin.ModelAdmin):
     list_display = (
-        'code', 
-        'type', 
+        'code',
+        'type',
         'duration',
     )
     list_filter = (
-        'code', 
-        'type', 
+        'code',
+        'type',
         'duration',
     )
 
+
 admin.site.register(Student, StudentCustomAdmin)
 admin.site.register(Code, CodesCustomAdmin)
+admin.site.register(CodeDeletion, CodeDeletionCustomAdmin)

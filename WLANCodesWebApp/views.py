@@ -1,5 +1,6 @@
+from tokenize import group
 from django.shortcuts import render, redirect
-from .models import Student, Code
+from .models import Student, Code, CodeDeletion
 from .forms import StudentForm
 from datetime import datetime
 
@@ -28,7 +29,7 @@ def edit_student(request, id):
         f = StudentForm(request.POST, instance=obj)
         if f.is_valid():
             f.save()
-        return redirect('codes')
+        return redirect('students')
 
 
 def delete_student(request, id=None):
@@ -49,21 +50,46 @@ def delete_student(request, id=None):
 
 
 def students(request):
-    students = Student.objects.all()
     if request.method == 'GET':
-        return render(request, 'students.html', {'students': students})
+        if request.GET.get('sort') == 'date':
+            students = Student.objects.all().order_by('-date')
+            return render(request, 'students.html', {'students': students})
+        elif request.GET.get('sort') == 'code':
+            students = Student.objects.all().order_by('code')
+            return render(request, 'students.html', {'students': students})
+        else:
+            students = Student.objects.all().order_by('group', 'name')
+            return render(request, 'students.html', {'students': students})
     if request.method == 'POST':
         id = int(request.POST.get('send'))
         student = Student.objects.get(id=id)
         oldcode = student.code
-        # TODO: oldcode on delete list
+        # TODO: put oldcode on delete list
+        if oldcode != None:
+            CodeDeletion.objects.create(
+                code_to_delete=oldcode,
+                name=student.name,
+                firstname=student.firstname,
+                group=student.group
+            )
         newcode = Code.objects.filter(type='h').first()
-        # TODO delete used code
         student.code = newcode.code
+        # delete used code
+        newcode.delete()
         student.date = datetime.today()
         student.save()
         # TODO: Send Mail
         return redirect('students')
+
+
+def codedeletion(request):
+    if request.method == 'GET':
+        deletions = CodeDeletion.objects.all()
+        return render(request, 'codedeletion.html', {'deletions': deletions})
+    if request.method == 'POST':
+        obj = CodeDeletion.objects.get(id=int(request.POST.get('delete')))
+        obj.delete()
+        return redirect('codedeletion')
 
 
 def student_import(request):

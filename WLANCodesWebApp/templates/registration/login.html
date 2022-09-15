@@ -1,0 +1,33 @@
+{% extends 'base.html' %}  
+{% block content %}
+
+<form method="post">
+  {% csrf_token %}
+  <div class="row justify-content-md-center">
+    <div class="card shadow" style="width: 400;">
+      <div class="card-body">
+        <h2 class="mb-4">Login</h2>
+         <p>
+          <label for="id_username" class="form-label">Benutzername:</label>
+          <input type="text" class="form-control" name="username" autofocus autocomplete="username">
+        </p>
+        <p>
+          <label for="id_password" class="form-label">Passwort:</label>
+          <input type="password" class="form-control" name="password" autocomplete="current-password">
+        </p>
+        <div class="text-center">
+          <button type="submit" class="btn btn-primary mt-3 mb-2">Anmelden</button>
+          <a href="{{ next }}" class="btn btn-secondary mt-3 mb-2">Abbrechen</a>
+          <input type="hidden" name="next" value="{{ next }}">
+          {% if form.errors %}
+            <div class="alert alert-danger mt-3">
+              Benutzername oder Passwort falsch.
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+{% endblock content %}
