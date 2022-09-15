@@ -1,6 +1,6 @@
 import code
 from django.contrib import admin
-from .models import Student, Code, CodeDeletion
+from .models import Student, Code, CodeDeletion, Config
 
 
 class StudentCustomAdmin(admin.ModelAdmin):
@@ -53,3 +53,4 @@ class CodesCustomAdmin(admin.ModelAdmin):
 admin.site.register(Student, StudentCustomAdmin)
 admin.site.register(Code, CodesCustomAdmin)
 admin.site.register(CodeDeletion, CodeDeletionCustomAdmin)
+admin.site.register(Config)

@@ -16,7 +16,7 @@ class Student(models.Model):
     name = models.CharField(max_length=50)
     firstname = models.CharField(max_length=50)
     group = models.CharField(max_length=3)
-    email = models.CharField(max_length=20)
+    email = models.CharField(max_length=30)
     date = models.DateTimeField(blank=True, null=True)
     code = models.CharField(max_length=20, blank=True, null=True)
 
@@ -26,3 +26,14 @@ class CodeDeletion(models.Model):
     name = models.CharField(max_length=50)
     firstname = models.CharField(max_length=50)
     group = models.CharField(max_length=3)
+
+
+class Config(models.Model):
+    NAME_CHOICES = [
+        ('noreply-mail', 'noreply-E-Mail zum Versand der Schadenmeldung'),
+    ]
+    name = models.CharField(max_length=50, choices=NAME_CHOICES)
+    setting = models.CharField(max_length=30, blank=True)
+
+    def __str__(self):
+        return self.setting

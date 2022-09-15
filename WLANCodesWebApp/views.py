@@ -1,14 +1,17 @@
 from tokenize import group
 from django.shortcuts import render, redirect
-from .models import Student, Code, CodeDeletion
+from .models import Student, Code, CodeDeletion, Config
 from .forms import StudentForm
 from datetime import datetime
+from django.core.mail import send_mail
+from django.contrib.auth.decorators import login_required
 
 
 def codes(request):
     return render(request, 'codes.html', {'text': "12345-67891"})
 
 
+@login_required
 def new_student(request):
     if request.method == 'GET':
         f = StudentForm()
@@ -20,6 +23,7 @@ def new_student(request):
         return redirect('codes')
 
 
+@login_required
 def edit_student(request, id):
     obj = Student.objects.get(id=id)
     if request.method == 'GET':
@@ -32,6 +36,7 @@ def edit_student(request, id):
         return redirect('students')
 
 
+@login_required
 def delete_student(request, id=None):
     obj = Student.objects.get(id=id)
     if request.method == 'GET':
@@ -49,6 +54,7 @@ def delete_student(request, id=None):
         return redirect('students')
 
 
+@login_required
 def students(request):
     if request.method == 'GET':
         if request.GET.get('sort') == 'date':
@@ -72,16 +78,34 @@ def students(request):
                 firstname=student.firstname,
                 group=student.group
             )
-        newcode = Code.objects.filter(type='h').first()
+        newcode = Code.objects.filter(type='y').first()
         student.code = newcode.code
         # delete used code
         newcode.delete()
         student.date = datetime.today()
         student.save()
-        # TODO: Send Mail
+        mail_text = (
+            "Hallo " + student.firstname + ",\n\n" +
+            "hiemit erhältst du deinen WLAN-Code für das aktuelle Schuljahr. " + 
+            "Der Code kann nur einmalig auf einem Gerät aktiviert werden, d.h. " +
+            "falls du ein Tablet hast, dein Tablet, ansonsten dein Smartphone.\n\n" +
+            "Dein Code lautet: \n\n" +
+            student.code + "\n\n" +
+            "Hinweis: Eine Weitergabe des Codes ist nicht möglich. Falls du einen " +
+            "neuen Code brauchst, wird der alte Code deaktiviert."
+        )
+        noreply = Config.objects.get(name="noreply-mail")
+        send_mail(
+            'WLAN-CODE',
+            mail_text,
+            noreply,
+            [student.email],
+            fail_silently=True,
+        )
         return redirect('students')
 
 
+@login_required
 def codedeletion(request):
     if request.method == 'GET':
         deletions = CodeDeletion.objects.all()
@@ -92,6 +116,7 @@ def codedeletion(request):
         return redirect('codedeletion')
 
 
+@login_required
 def student_import(request):
     if request.method == 'GET':
         return render(request, 'student_import.html', {})
