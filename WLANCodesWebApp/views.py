@@ -50,6 +50,15 @@ def delete_student(request, id=None):
     if request.method == 'POST':
         if request.POST.get('delete'):
             del_obj = Student.objects.get(id=int(request.POST.get('delete')))
+            oldcode = del_obj.code
+            # put oldcode on delete list
+            if oldcode is not None:
+                CodeDeletion.objects.create(
+                    code_to_delete=oldcode,
+                    name=del_obj.name,
+                    firstname=del_obj.firstname,
+                    group=del_obj.group
+                )
             del_obj.delete()
         return redirect('students')
 
@@ -79,7 +88,7 @@ def students(request):
         student = Student.objects.get(id=id)
         oldcode = student.code
         # put oldcode on delete list
-        if oldcode != None:
+        if oldcode is not None:
             CodeDeletion.objects.create(
                 code_to_delete=oldcode,
                 name=student.name,
