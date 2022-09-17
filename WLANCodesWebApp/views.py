@@ -71,7 +71,8 @@ def students(request):
             print(searchterm)
             students = (
                 Student.objects.filter(name__icontains=searchterm) | 
-                Student.objects.filter(firstname__icontains=searchterm)
+                Student.objects.filter(firstname__icontains=searchterm) | 
+                Student.objects.filter(code__icontains=searchterm)
             )
             return render(request, 'students.html', {'students': students})
         elif request.GET.get('sort') == 'date':
@@ -141,17 +142,17 @@ def student_import(request):
         text = request.POST.get('input')
         for line in text.split('\n'):
             item = line.split(';')
-            try: 
-                if Student.objects.filter(email=item[3].strip()):
-                    pass
+            try:
+                Student.objects.filter(email=item[3].strip())
             except IndexError:
                 pass
             else:
-                # import
-                Student.objects.create(
-                    name=item[0].strip(),
-                    firstname=item[1].strip(),
-                    group=item[2].strip(),
-                    email=item[3].strip(),
-                )
+                if not Student.objects.filter(email=item[3].strip()):
+                    # import
+                    Student.objects.create(
+                        name=item[0].strip(),
+                        firstname=item[1].strip(),
+                        group=item[2].strip(),
+                        email=item[3].strip(),
+                    )
         return redirect('students')
