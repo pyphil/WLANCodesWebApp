@@ -3,6 +3,7 @@ from django.db import models
 
 class Code(models.Model):
     TYPE_CHOICES = [
+        ('m', 'Minuten'),
         ('h', 'Stunde(n)'),
         ('d', 'Tag(e)'),
         ('y', 'Jahr'),
