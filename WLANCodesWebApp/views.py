@@ -8,7 +8,30 @@ from django.contrib.auth.decorators import login_required
 
 
 def codes(request):
-    return render(request, 'codes.html', {'text': "12345-67891"})
+    code = 0
+    if request.GET.get('c'):
+        if request.GET.get('c') == "1":
+            obj = Code.objects.filter(type='h', duration=1).first()
+            if obj == None:
+                code = "- leer -"
+            else:
+                code = obj.code
+                obj.delete()
+        if request.GET.get('c') == "2":
+            obj = Code.objects.filter(type='h', duration=2).first()
+            if obj == None:
+                code = "- leer -"
+            else:
+                code = obj.code
+                obj.delete()
+        if request.GET.get('c') == "3":
+            obj = Code.objects.filter(type='d', duration=1).first()
+            if obj == None:
+                code = "- leer -"
+            else:
+                code = obj.code
+                obj.delete()
+    return render(request, 'codes.html', {'code': code, 'active': request.GET.get('c')})
 
 
 @login_required
