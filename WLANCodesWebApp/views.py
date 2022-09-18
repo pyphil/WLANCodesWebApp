@@ -1,4 +1,3 @@
-from tokenize import group
 from django.shortcuts import render, redirect
 from .models import Student, Code, CodeDeletion, Config
 from .forms import StudentForm
@@ -8,6 +7,10 @@ from django.contrib.auth.decorators import login_required
 
 
 def codes(request):
+    remaining_1 = len(Code.objects.filter(type='h', duration=1))
+    remaining_2 = len(Code.objects.filter(type='h', duration=2))
+    remaining_3 = len(Code.objects.filter(type='d', duration=1))
+
     code = 0
     if request.GET.get('c'):
         if request.GET.get('c') == "1":
@@ -31,7 +34,14 @@ def codes(request):
             else:
                 code = obj.code
                 obj.delete()
-    return render(request, 'codes.html', {'code': code, 'active': request.GET.get('c')})
+    context = {
+        'code': code, 
+        'active': request.GET.get('c'),
+        'remaining_1': remaining_1,
+        'remaining_2': remaining_2,
+        'remaining_3': remaining_3,
+    }
+    return render(request, 'codes.html', context)
 
 
 @login_required
