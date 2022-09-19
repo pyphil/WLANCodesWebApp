@@ -6,13 +6,22 @@ from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
 
 
+@login_required
 def codes(request):
     remaining_1 = len(Code.objects.filter(type='h', duration=1))
     remaining_2 = len(Code.objects.filter(type='h', duration=2))
     remaining_3 = len(Code.objects.filter(type='d', duration=1))
 
-    code = 0
+    try: 
+        code = request.session['code']
+        active = request.session['active']
+        del request.session['code']
+        del request.session['active']
+    except KeyError:
+        code = 0
+        active = 0
     if request.GET.get('c'):
+        request.session['active'] = request.GET.get('c')
         if request.GET.get('c') == "1":
             obj = Code.objects.filter(type='h', duration=1).first()
             if obj == None:
@@ -34,14 +43,17 @@ def codes(request):
             else:
                 code = obj.code
                 obj.delete()
-    context = {
-        'code': code, 
-        'active': request.GET.get('c'),
-        'remaining_1': remaining_1,
-        'remaining_2': remaining_2,
-        'remaining_3': remaining_3,
-    }
-    return render(request, 'codes.html', context)
+        request.session['code'] = code
+        return redirect('codes')
+    else:
+        context = {
+            'code': code, 
+            'active': active,
+            'remaining_1': remaining_1,
+            'remaining_2': remaining_2,
+            'remaining_3': remaining_3,
+        }
+        return render(request, 'codes.html', context)
 
 
 @login_required
