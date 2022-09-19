@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
 import re
-from WLANCodesWebApp.models import Code
+from WLANCodesWebApp.models import Code, Config
 
 
 def codeimport(request):
     if request.method == 'GET':
-        return render(request, 'codeimport.html', {})
+        lnk_controller = Config.objects.get(name='lnk_controller')
+        return render(request, 'codeimport.html', {'lnk_controller': lnk_controller.setting})
     if request.method == 'POST':
         # get Codes
         text = request.POST.get('codes')

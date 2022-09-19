@@ -32,6 +32,7 @@ class CodeDeletion(models.Model):
 class Config(models.Model):
     NAME_CHOICES = [
         ('noreply-mail', 'noreply-E-Mail zum Versand der Schadenmeldung'),
+        ('lnk_controller', 'Link zum WLAN-Controller'),
     ]
     name = models.CharField(max_length=50, choices=NAME_CHOICES)
     setting = models.CharField(max_length=30, blank=True)

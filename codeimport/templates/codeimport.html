@@ -19,9 +19,12 @@
         <option value="y">Jahr</option>
       </select>
     </div>     
+    <div class="col-3">
+      <a href="{{ lnk_controller|safe }}" type="button" class="btn btn-primary mt-4" id="controller">Link WLAN Controller</a>
+    </div>
   </div>
   <label for="input" class="form-label mt-2">Aus dem importierten Text werden Codes in folgendem Format gefiltert und importiert: <code>XXXXX-XXXXX</code></label>
-  <textarea class="form-control" name="codes" id="input" rows="20"></textarea>
+  <textarea class="form-control" name="codes" id="input" rows="12"></textarea>
     <button type="submit" class="btn btn-primary mt-2">Importieren</button>
 </form>
 
