@@ -35,7 +35,7 @@ class Config(models.Model):
         ('lnk_controller', 'Link zum WLAN-Controller'),
     ]
     name = models.CharField(max_length=50, choices=NAME_CHOICES)
-    setting = models.CharField(max_length=30, blank=True)
+    setting = models.CharField(max_length=200, blank=True)
 
     def __str__(self):
         return self.setting
