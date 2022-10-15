@@ -12,7 +12,7 @@ def codes(request):
     remaining_2 = len(Code.objects.filter(type='h', duration=2))
     remaining_3 = len(Code.objects.filter(type='d', duration=1))
 
-    try: 
+    try:
         code = request.session['code']
         active = request.session['active']
         del request.session['code']
@@ -24,21 +24,21 @@ def codes(request):
         request.session['active'] = request.GET.get('c')
         if request.GET.get('c') == "1":
             obj = Code.objects.filter(type='h', duration=1).first()
-            if obj == None:
+            if obj is None:
                 code = "- leer -"
             else:
                 code = obj.code
                 obj.delete()
         if request.GET.get('c') == "2":
             obj = Code.objects.filter(type='h', duration=2).first()
-            if obj == None:
+            if obj is None:
                 code = "- leer -"
             else:
                 code = obj.code
                 obj.delete()
         if request.GET.get('c') == "3":
             obj = Code.objects.filter(type='d', duration=1).first()
-            if obj == None:
+            if obj is None:
                 code = "- leer -"
             else:
                 code = obj.code
@@ -47,7 +47,7 @@ def codes(request):
         return redirect('codes')
     else:
         context = {
-            'code': code, 
+            'code': code,
             'active': active,
             'remaining_1': remaining_1,
             'remaining_2': remaining_2,
@@ -115,8 +115,8 @@ def students(request):
             searchterm = str(request.GET.get('search'))
             print(searchterm)
             students = (
-                Student.objects.filter(name__icontains=searchterm) | 
-                Student.objects.filter(firstname__icontains=searchterm) | 
+                Student.objects.filter(name__icontains=searchterm) |
+                Student.objects.filter(firstname__icontains=searchterm) |
                 Student.objects.filter(code__icontains=searchterm)
             )
             return render(request, 'students.html', {'students': students})
@@ -149,7 +149,7 @@ def students(request):
         student.save()
         mail_text = (
             "Hallo " + student.firstname + ",\n\n" +
-            "hiemit erhältst du deinen WLAN-Code für das aktuelle Schuljahr. " + 
+            "hiemit erhältst du deinen WLAN-Code für das aktuelle Schuljahr. " +
             "Der Code kann nur einmalig auf einem Gerät aktiviert werden, d.h. " +
             "falls du ein Tablet hast, dein Tablet, ansonsten dein Smartphone.\n\n" +
             "Dein Code lautet: \n\n" +
