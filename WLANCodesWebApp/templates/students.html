@@ -20,6 +20,7 @@
   <!-- <table class="table table-bordered border-secondary"> -->
   <table class="table table-hover table-bordered border-secondary table-sm">
     <thead>
+      <th></th>
       <th><a href="/students/">Name</a></th>
       <th>Vorname</th>
       <th>Stufe</th>
@@ -27,11 +28,15 @@
       <th><a href="/students/?sort=date">Ausgabedatum</a></th>
       <th><a href="/students/?sort=code">Code</a></th>
       <th>Aktionen</th>
-
     </thead>
     <tbody>
       {% for student in students %}
         <tr>
+          <td>
+            
+              <input class="form-check-input" name="checkbox" type="checkbox" value="{{ student.id }}" id="{{ student.id }}">
+            
+          </td>
           <td>{{ student.name }}</td>
           <td>{{ student.firstname }}</td>
           <td>{{ student.group }}</td>
@@ -48,9 +53,9 @@
     </tbody>
   </table>
   <table>
-    <td><button type="submit" class="btn btn-primary btn-sm">Neuer Code für alle Datensätze</button></td>
-    <td><button type="submit" class="btn btn-primary btn-sm">Alle Codes per E-Mail versenden</button></td>
-    <td><button type="submit" class="btn btn-danger btn-sm">Alle Datensätze löschen</button></td>
+    <td><button name="checked" value="checked" class="btn btn-primary btn-sm">Neuer Code und Versand für alle <strong>markierten</strong> Datensätze</button></td>
+    <td><button class="btn btn-primary btn-sm">Neuer Code und Versand für <strong>alle</strong> Datensätze</button></td>
+    <td><button class="btn btn-danger btn-sm">Alle Datensätze löschen</button></td>
   </table>
 </form>
 

@@ -5,8 +5,12 @@ from WLANCodesWebApp.models import Code, Config
 
 def codeimport(request):
     if request.method == 'GET':
-        lnk_controller = Config.objects.get(name='lnk_controller')
-        return render(request, 'codeimport.html', {'lnk_controller': lnk_controller.setting})
+        try:
+            lnk_controller = Config.objects.get(name='lnk_controller')
+            lnk_controller = lnk_controller.setting
+        except Config.DoesNotExist:
+            lnk_controller = "#"
+        return render(request, 'codeimport.html', {'lnk_controller': lnk_controller})
     if request.method == 'POST':
         # get Codes
         text = request.POST.get('codes')
