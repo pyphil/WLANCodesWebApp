@@ -4,6 +4,7 @@ from .forms import StudentForm
 from datetime import datetime
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
+from threading import Thread
 
 
 @login_required
@@ -150,25 +151,39 @@ def students(request):
             newcode.delete()
             student.date = datetime.today()
             student.save()
-            mail_text = (
-                "Hallo " + student.firstname + ",\n\n" +
-                "hiemit erhältst du deinen WLAN-Code für das aktuelle Schuljahr. " +
-                "Der Code kann nur einmalig auf einem Gerät aktiviert werden, d.h. " +
-                "falls du ein Tablet hast, dein Tablet, ansonsten dein Smartphone.\n\n" +
-                "Dein Code lautet: \n\n" +
-                student.code + "\n\n" +
-                "Hinweis: Eine Weitergabe des Codes ist nicht möglich. Falls du einen " +
-                "neuen Code brauchst, wird der alte Code deaktiviert."
-            )
+
             noreply = Config.objects.get(name="noreply-mail")
-            send_mail(
+            thread = mail_thread(noreply, student)
+            thread.start()
+
+        return redirect('students')
+
+
+class mail_thread(Thread):
+    def __init__(self, noreply, student):
+        super(mail_thread, self).__init__()
+        self.noreply = noreply
+        self.student = student
+
+    # run method automatically executed
+    def run(self):
+        mail_text = (
+            "Hallo " + self.student.firstname + ",\n\n" +
+            "hiemit erhältst du deinen WLAN-Code für das aktuelle Schuljahr. " +
+            "Der Code kann nur einmalig auf einem Gerät aktiviert werden, d.h. " +
+            "falls du ein Tablet hast, dein Tablet, ansonsten dein Smartphone.\n\n" +
+            "Dein Code lautet: \n\n" +
+            self.student.code + "\n\n" +
+            "Hinweis: Eine Weitergabe des Codes ist nicht möglich. Falls du einen " +
+            "neuen Code brauchst, wird der alte Code deaktiviert."
+        )
+        send_mail(
                 'WLAN-CODE',
                 mail_text,
-                noreply,
-                [student.email],
+                self.noreply,
+                [self.student.email],
                 fail_silently=True,
             )
-        return redirect('students')
 
 
 @login_required
