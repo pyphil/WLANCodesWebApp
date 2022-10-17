@@ -14,6 +14,11 @@
     </div>
   </div>
 </form>
+{% if alert == 1%}
+  <div class="alert alert-info" role="alert">
+    Der Versand der Codes läuft im Hintergrund. Um den Fortschritt hier zu sehen, muss die Seite gelegentlich neu geladen werden.
+  </div>
+{% endif %}
 <form method="post">
   {% csrf_token %}
 
@@ -32,10 +37,8 @@
     <tbody>
       {% for student in students %}
         <tr>
-          <td>
-            
+          <td class="text-center">
               <input class="form-check-input" name="checkbox" type="checkbox" value="{{ student.id }}" id="{{ student.id }}">
-            
           </td>
           <td>{{ student.name }}</td>
           <td>{{ student.firstname }}</td>
@@ -53,7 +56,7 @@
     </tbody>
   </table>
   <table>
-    <td><button name="checked" value="checked" class="btn btn-primary btn-sm">Neuer Code und Versand für alle <strong>markierten</strong> Datensätze</button></td>
+    <td><button name="checked" value="checked" class="btn btn-primary btn-sm">Neuer Code und Versand <strong>markierte</strong> Datensätze</button></td>
     <td><button class="btn btn-primary btn-sm">Neuer Code und Versand für <strong>alle</strong> Datensätze</button></td>
     <td><button class="btn btn-danger btn-sm">Alle Datensätze löschen</button></td>
   </table>

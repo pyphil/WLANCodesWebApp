@@ -110,7 +110,7 @@ def delete_student(request, id=None):
 
 
 @login_required
-def students(request):
+def students(request, alert=None):
     if request.method == 'GET':
         if request.GET.get('search') is not None:
             searchterm = str(request.GET.get('search'))
@@ -120,24 +120,43 @@ def students(request):
                 Student.objects.filter(firstname__icontains=searchterm) |
                 Student.objects.filter(code__icontains=searchterm)
             )
-            return render(request, 'students.html', {'students': students})
         elif request.GET.get('sort') == 'date':
             students = Student.objects.all().order_by('-date')
-            return render(request, 'students.html', {'students': students})
         elif request.GET.get('sort') == 'code':
             students = Student.objects.all().order_by('code')
-            return render(request, 'students.html', {'students': students})
         else:
             students = Student.objects.all().order_by('group', 'name')
-            return render(request, 'students.html', {'students': students})
+        return render(request, 'students.html', {'students': students, 'alert': alert})
     if request.method == 'POST':
         if request.POST.get('checked'):
-            print(request.POST.getlist('checkbox'))
-        else:
-            id = int(request.POST.get('send'))
+            # put checked students in a list
+            student_ids = request.POST.getlist('checkbox')
+            if student_ids == []:
+                alert = 0
+        elif request.POST.get('send'):
+            # put one student in a list
+            student_ids = []
+            student_ids.append(request.POST.get('send'))
+            alert = 1
+
+        thread = mail_thread(student_ids)
+        thread.start()
+
+        return redirect('students', alert=alert)
+
+
+class mail_thread(Thread):
+    def __init__(self, student_ids):
+        super(mail_thread, self).__init__()
+        self.student_ids = student_ids
+        self.noreply = Config.objects.get(name="noreply-mail")
+
+    # run method is automatically executed on thread.start()
+    def run(self):
+        for id in self.student_ids:
             student = Student.objects.get(id=id)
             oldcode = student.code
-            # put oldcode on delete list
+            # put oldcode on delete list if exists
             if oldcode is not None:
                 CodeDeletion.objects.create(
                     code_to_delete=oldcode,
@@ -151,39 +170,24 @@ def students(request):
             newcode.delete()
             student.date = datetime.today()
             student.save()
-
-            noreply = Config.objects.get(name="noreply-mail")
-            thread = mail_thread(noreply, student)
-            thread.start()
-
-        return redirect('students')
-
-
-class mail_thread(Thread):
-    def __init__(self, noreply, student):
-        super(mail_thread, self).__init__()
-        self.noreply = noreply
-        self.student = student
-
-    # run method automatically executed
-    def run(self):
-        mail_text = (
-            "Hallo " + self.student.firstname + ",\n\n" +
-            "hiemit erhältst du deinen WLAN-Code für das aktuelle Schuljahr. " +
-            "Der Code kann nur einmalig auf einem Gerät aktiviert werden, d.h. " +
-            "falls du ein Tablet hast, dein Tablet, ansonsten dein Smartphone.\n\n" +
-            "Dein Code lautet: \n\n" +
-            self.student.code + "\n\n" +
-            "Hinweis: Eine Weitergabe des Codes ist nicht möglich. Falls du einen " +
-            "neuen Code brauchst, wird der alte Code deaktiviert."
-        )
-        send_mail(
-                'WLAN-CODE',
-                mail_text,
-                self.noreply,
-                [self.student.email],
-                fail_silently=True,
+            mail_text = (
+                "Hallo " + student.firstname + ",\n\n" +
+                "hiermit erhältst du deinen WLAN-Code für das aktuelle Schuljahr. " +
+                "Der Code kann nur einmalig auf einem Gerät aktiviert werden, d.h. " +
+                "falls du ein Tablet hast, dein Tablet, ansonsten dein Smartphone.\n\n" +
+                "Dein Code lautet: \n\n" +
+                student.code + "\n\n" +
+                "Hinweis: Eine Weitergabe des Codes ist nicht möglich. Falls du einen " +
+                "neuen Code brauchst, wird der alte Code deaktiviert. Bei Problemen wendest " +
+                "du dich an die Administratoren (LOB/SCL)"
             )
+            send_mail(
+                    'WLAN-CODE',
+                    mail_text,
+                    self.noreply,
+                    [student.email],
+                    fail_silently=True,
+                )
 
 
 @login_required
