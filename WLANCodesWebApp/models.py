@@ -31,11 +31,13 @@ class CodeDeletion(models.Model):
 
 class Config(models.Model):
     NAME_CHOICES = [
-        ('noreply-mail', 'noreply-E-Mail zum Versand der Schadenmeldung'),
+        ('noreply-mail', 'noreply-E-Mail-Absenderadresse zum Versand der Codes'),
+        ('mail_text', 'Mailtext zum Versand der Codes'),
         ('lnk_controller', 'Link zum WLAN-Controller'),
     ]
     name = models.CharField(max_length=50, choices=NAME_CHOICES)
     setting = models.CharField(max_length=200, blank=True)
+    text = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.setting

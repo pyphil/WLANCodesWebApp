@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import Student, Code, CodeDeletion, Config
-from .forms import StudentForm
+from .forms import StudentForm, MailForm
 from datetime import datetime
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
@@ -111,7 +111,13 @@ def delete_student(request, id=None):
 
 @login_required
 def students(request, alert=None):
+    try:
+        mail_text_obj = Config.objects.get(name='mail_text')
+    except Config.DoesNotExist:
+        mail_text_obj = Config.objects.create(name='mail_text', setting='mail_text')
+
     if request.method == 'GET':
+        mail_form = MailForm(instance=mail_text_obj)
         if request.GET.get('search') is not None:
             searchterm = str(request.GET.get('search'))
             print(searchterm)
@@ -126,21 +132,33 @@ def students(request, alert=None):
             students = Student.objects.all().order_by('code')
         else:
             students = Student.objects.all().order_by('group', 'name')
-        return render(request, 'students.html', {'students': students, 'alert': alert})
+        return render(request, 'students.html', {
+            'students': students, 'alert': alert, 'mail_form': mail_form}
+        )
+
     if request.method == 'POST':
         if request.POST.get('checked'):
             # put checked students in a list
             student_ids = request.POST.getlist('checkbox')
             if student_ids == []:
                 alert = 0
-        elif request.POST.get('send'):
+            else:
+                alert = 1
+                thread = mail_thread(student_ids)
+                thread.start()
+
+        if request.POST.get('send'):
             # put one student in a list
             student_ids = []
             student_ids.append(request.POST.get('send'))
             alert = 1
+            thread = mail_thread(student_ids)
+            thread.start()
 
-        thread = mail_thread(student_ids)
-        thread.start()
+        if request.POST.get('save_mail_text'):
+            mail_form = MailForm(request.POST, instance=mail_text_obj)
+            if mail_form.is_valid():
+                mail_form.save()
 
         return redirect('students', alert=alert)
 
@@ -170,24 +188,29 @@ class mail_thread(Thread):
             newcode.delete()
             student.date = datetime.today()
             student.save()
-            mail_text = (
-                "Hallo " + student.firstname + ",\n\n" +
-                "hiermit erhältst du deinen WLAN-Code für das aktuelle Schuljahr. " +
-                "Der Code kann nur einmalig auf einem Gerät aktiviert werden, d.h. " +
-                "falls du ein Tablet hast, dein Tablet, ansonsten dein Smartphone.\n\n" +
-                "Dein Code lautet: \n\n" +
-                student.code + "\n\n" +
-                "Hinweis: Eine Weitergabe des Codes ist nicht möglich. Falls du einen " +
-                "neuen Code brauchst, wird der alte Code deaktiviert. Bei Problemen wendest " +
-                "du dich an die Administratoren (LOB/SCL)"
-            )
+            mail_text_obj = Config.objects.get(name='mail_text')
+            mail_text = mail_text_obj.text
+            mail_text = mail_text.replace('#NAME#', student.firstname)
+            mail_text = mail_text.replace('#CODE#', student.code)
+
+            # mail_text = (
+            #     "Hallo " + student.firstname + ",\n\n" +
+            #     "hiermit erhältst du deinen WLAN-Code für das aktuelle Schuljahr. " +
+            #     "Der Code kann nur einmalig auf einem Gerät aktiviert werden, d.h. " +
+            #     "falls du ein Tablet hast, dein Tablet, ansonsten dein Smartphone.\n\n" +
+            #     "Dein Code lautet: \n\n" +
+            #     student.code + "\n\n" +
+            #     "Hinweis: Eine Weitergabe des Codes ist nicht möglich. Falls du einen " +
+            #     "neuen Code brauchst, wird der alte Code deaktiviert. Bei Problemen wendest " +
+            #     "du dich an die Administratoren (LOB/SCL)"
+            # )
             send_mail(
-                    'WLAN-CODE',
-                    mail_text,
-                    self.noreply,
-                    [student.email],
-                    fail_silently=True,
-                )
+                'WLAN-CODE',
+                mail_text,
+                self.noreply,
+                [student.email],
+                fail_silently=True,
+            )
 
 
 @login_required

@@ -4,6 +4,40 @@
 <h1>SII Codes</h1>
 <td><a href="{% url 'student_import' %}" class="btn btn-secondary btn-sm">CSV Import</a></td>
 <td><a href="{% url 'new_student' %}" class="btn btn-secondary btn-sm">Datensatz manuell hinzufügen</a></td>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#MailModal">
+  E-Mail-Text
+</button>
+
+<!-- Modal -->
+<form method="post">
+  <div class="modal fade" id="MailModal" tabindex="-1" aria-labelledby="MailModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="MailModalLabel">E-Mail-Text</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          {% csrf_token %}
+          {{ mail_form }}
+          <div class="alert alert-info mt-2">
+            <small>
+              Platzhalter für den Vornamen: #NAME#<br>
+              Platzhalter für den Code: #CODE#
+            </small>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
+          <button type="submit" name="save_mail_text" value="save_mail_text" class="btn btn-primary">Speichern</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
 <form>
   <div class="row mt-2 mb-2 mt-4">
     <div class="col-4 pe-0">
