@@ -157,6 +157,7 @@ def students(request, alert=None):
 
         if request.POST.get('save_mail_text'):
             mail_form = MailForm(request.POST, instance=mail_text_obj)
+            alert = 0
             if mail_form.is_valid():
                 mail_form.save()
 
