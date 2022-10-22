@@ -133,6 +133,7 @@ def students(request, alert=None):
         mail_text_obj = Config.objects.create(name='mail_text', setting='mail_text')
 
     if request.method == 'GET':
+        remaining_year = len(Code.objects.filter(type='y', duration=1))
         mail_form = MailForm(instance=mail_text_obj)
         if request.GET.get('search') is not None:
             searchterm = str(request.GET.get('search'))
@@ -148,8 +149,13 @@ def students(request, alert=None):
             students = Student.objects.all().order_by('code')
         else:
             students = Student.objects.all().order_by('group', 'name')
+        print(remaining_year)
         return render(request, 'students.html', {
-            'students': students, 'alert': alert, 'mail_form': mail_form}
+            'students': students, 
+            'alert': alert, 
+            'mail_form': mail_form,
+            'remaining_year': remaining_year,
+            }
         )
 
     if request.method == 'POST':
