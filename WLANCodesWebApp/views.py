@@ -12,7 +12,7 @@ def codes(request):
     if not request.session.get('has_access'):
         try:
             access = Config.objects.get(name='access')
-            ACCESSKEY = access.setting
+            ACCESSKEY = access.text
         except Config.DoesNotExist:
             # development
             request.session['has_access'] = True
