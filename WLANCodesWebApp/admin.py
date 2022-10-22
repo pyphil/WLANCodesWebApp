@@ -50,7 +50,13 @@ class CodesCustomAdmin(admin.ModelAdmin):
     )
 
 
+class ConfigCustomAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+    )
+
+
 admin.site.register(Student, StudentCustomAdmin)
 admin.site.register(Code, CodesCustomAdmin)
 admin.site.register(CodeDeletion, CodeDeletionCustomAdmin)
-admin.site.register(Config)
+admin.site.register(Config, ConfigCustomAdmin)

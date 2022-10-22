@@ -7,8 +7,24 @@ from django.contrib.auth.decorators import login_required
 from threading import Thread
 
 
-@login_required
 def codes(request):
+    # Zugriff nur mit access key in production
+    if not request.session.get('has_access'):
+        try:
+            access = Config.objects.get(name='access')
+            ACCESSKEY = access.setting
+        except Config.DoesNotExist:
+            # development
+            request.session['has_access'] = True
+        else:
+            if request.GET.get('access') != ACCESSKEY:
+                return render(request, 'NoAccess.html')
+            else:
+                request.session['has_access'] = True
+                return redirect('/')
+    elif request.GET.get('access') and request.session.get('has_access'):
+        return redirect('/')
+
     remaining_1 = len(Code.objects.filter(type='h', duration=1))
     remaining_2 = len(Code.objects.filter(type='h', duration=2))
     remaining_3 = len(Code.objects.filter(type='d', duration=1))

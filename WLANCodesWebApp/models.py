@@ -34,6 +34,7 @@ class Config(models.Model):
         ('noreply-mail', 'noreply-E-Mail-Absenderadresse zum Versand der Codes'),
         ('mail_text', 'Mailtext zum Versand der Codes'),
         ('lnk_controller', 'Link zum WLAN-Controller'),
+        ('access', 'Access Key'),
     ]
     name = models.CharField(max_length=50, choices=NAME_CHOICES)
     setting = models.CharField(max_length=200, blank=True)
