@@ -137,7 +137,6 @@ def students(request, alert=None):
         mail_form = MailForm(instance=mail_text_obj)
         if request.GET.get('search') is not None:
             searchterm = str(request.GET.get('search'))
-            print(searchterm)
             students = (
                 Student.objects.filter(name__icontains=searchterm) |
                 Student.objects.filter(firstname__icontains=searchterm) |
@@ -151,10 +150,11 @@ def students(request, alert=None):
             students = Student.objects.all().order_by('group', 'name')
         print(remaining_year)
         return render(request, 'students.html', {
-            'students': students, 
-            'alert': alert, 
+            'students': students,
+            'alert': alert,
             'mail_form': mail_form,
             'remaining_year': remaining_year,
+            'search_string': request.GET.get('search'),
             }
         )
 
@@ -183,7 +183,8 @@ def students(request, alert=None):
             if mail_form.is_valid():
                 mail_form.save()
 
-        return redirect('students', alert=alert)
+        # return redirect('students', alert=alert)
+        return redirect('/students/' + str(alert) + '?search=' + str(request.GET.get('search')))
 
 
 class mail_thread(Thread):

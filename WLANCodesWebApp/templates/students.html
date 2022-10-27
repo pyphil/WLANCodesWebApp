@@ -43,10 +43,16 @@
 <form>
   <div class="row mt-2 mb-2 mt-4 mb-4">
     <div class="col pe-0">
-      <input class="form-control" placeholder="Suche nach Schülernamen oder Codes" name="search">
-    </div>
+      {% if search_string %}
+        <input class="form-control" name="search" value="{{ search_string }}">
+      {% else %}  
+        <input class="form-control" placeholder="Suche nach Schülernamen oder Codes" name="search">
+      {% endif %}
+      </div>
     <div class="col-auto">
       <button type="submit" class="btn btn-primary">Suchen</button>
+      <a href="{% url 'students' %}" class="btn btn-secondary">&hairsp;<i class="bi bi-x-lg"></i>&hairsp;</a>
+      <!-- <button class="btn btn-secondary">X</button> -->
     </div>
   </div>
 </form>
