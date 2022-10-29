@@ -96,9 +96,11 @@ tbody td {
           <td>{{ student.date|date:"SHORT_DATETIME_FORMAT" }}</td>
           <td>{{ student.code }}</td>
           <td>
-            <button name="send" value="{{ student.id }}" class="btn btn-primary btn-sm"><i class="bi bi-tag-fill"></i><i class="bi bi-plus"></i><i class="bi bi-envelope-check-fill"></i></button>
-            <a href="{% url 'edit_student' student.id %}" class="btn btn-secondary btn-sm"><i class="bi bi-pencil-fill"></i></a>
-            <a href="{% url 'delete_student' student.id %}" name="delete" class="btn btn-danger btn-sm"><i class="bi bi-trash3-fill"></i></a>
+            <span style="white-space: nowrap;">
+              <button name="send" value="{{ student.id }}" class="btn btn-primary btn-sm"><i class="bi bi-tag-fill"></i><i class="bi bi-plus"></i><i class="bi bi-envelope-check-fill"></i></button>
+              <a href="{% url 'edit_student' student.id %}" class="btn btn-secondary btn-sm"><i class="bi bi-pencil-fill"></i></a>
+              <a href="{% url 'delete_student' student.id %}" name="delete" class="btn btn-danger btn-sm"><i class="bi bi-trash3-fill"></i></a>
+            </span>
           </td>
         </tr>
       {% endfor %}
