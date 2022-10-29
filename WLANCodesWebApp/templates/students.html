@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
+<style>
+tbody td {
+  font-size: 90%;
+  }
+</style>
 
 <h1>SII Codes</h1>
 <a href="{% url 'student_import' %}" class="btn btn-secondary btn-sm">CSV Import</a>
