@@ -240,8 +240,17 @@ class mail_thread(Thread):
 @login_required
 def codedeletion(request):
     if request.method == 'GET':
+        try:
+            lnk_controller = Config.objects.get(name='lnk_controller')
+            lnk_controller = lnk_controller.setting
+        except Config.DoesNotExist:
+            lnk_controller = "#"
         deletions = CodeDeletion.objects.all()
-        return render(request, 'codedeletion.html', {'deletions': deletions})
+        return render(request, 'codedeletion.html', {
+            'deletions': deletions,
+            'lnk_controller': lnk_controller,
+            }
+        )
     if request.method == 'POST':
         obj = CodeDeletion.objects.get(id=int(request.POST.get('delete')))
         obj.delete()

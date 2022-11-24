@@ -1,7 +1,14 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1>Zu löschende Codes</h1>
+<div class="row">
+  <div class="col">
+    <h1>Zu löschende Codes</h1>
+  </div>
+  <div class="col">
+    <a href="{{ lnk_controller|safe }}" class="btn btn-primary mt-2" id="controller" target="_blank">Link WLAN Controller</a>
+  </div>
+</div>
 
 <form method="post">
   {% csrf_token %}
