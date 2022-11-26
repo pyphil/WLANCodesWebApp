@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
 import re
 from WLANCodesWebApp.models import Code, Config
+from django.contrib.auth.decorators import login_required
 
 
+@login_required
 def codeimport(request):
     if request.method == 'GET':
         try:
