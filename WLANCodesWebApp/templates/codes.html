@@ -74,7 +74,9 @@
 
 {% if code != 0 %}
     <h1 class="display-1 text-center mt-5" style="font-size: calc(4rem + 4.5vw)">{{ code }}</h1>
+    <div class="text-center">
+        <small><i>abgerufen: {% now "SHORT_DATETIME_FORMAT" %} Uhr </i> &emsp;<a href="{% url 'codes' %}" class="btn btn-secondary btn-sm"><i class="bi bi-trash3-fill"> </i></a></small>
+    </div>
 {% endif %}
-
 
 {% endblock content %}
