@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1>Import Students</h1>
+<h1>Schüler:innen Importieren</h1>
+<p>Bei gleicher E-Mail-Adresse erfolgt ein Update der Datensätze für Name, Vorname und Klasse. Bei neuen oder geänderten E-Mail-Adressen wird ein neuer Datensatz erstellt.</p>
 <form method="post">
     {% csrf_token %}
     <div class="mb-3">
-        <label for="input" class="form-label">CSV Input Format: <code>Name;Vorname;Klasse;E-Mail</code><br>
-            <br>ohne Kopfzeile in den folgenden Textrahmen kopieren:</label>
+        <label for="input" class="form-label">Daten <b>ohne Kopfzeile</b> in den folgenden Textrahmen kopieren im CSV Input Format: <code>Name;Vorname;Klasse;E-Mail</code><br>
+            <br></label>
         <textarea class="form-control" name="input" id="input" rows="20"></textarea>
     </div>
     <button type="submit" class="btn btn-primary">Importieren</button>

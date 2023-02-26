@@ -278,4 +278,11 @@ def student_import(request):
                         group=item[2].strip(),
                         email=item[3].strip(),
                     )
+                else:
+                    student = Student.objects.filter(email=item[3].strip()).first()
+                    student.name = item[0].strip()
+                    student.firstname = item[1].strip()
+                    student.group = item[2].strip()
+                    student.save()
+
         return redirect('students')
