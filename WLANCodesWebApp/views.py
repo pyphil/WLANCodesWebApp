@@ -4,9 +4,11 @@ from .forms import StudentForm, MailForm
 from datetime import datetime
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from threading import Thread
 
 
+@login_required
 def codes(request):
     # Zugriff nur mit access key in production
     if not request.session.get('has_access'):
@@ -73,7 +75,7 @@ def codes(request):
         return render(request, 'codes.html', context)
 
 
-@login_required
+@staff_member_required
 def new_student(request):
     if request.method == 'GET':
         f = StudentForm()
@@ -85,7 +87,7 @@ def new_student(request):
         return redirect('codes')
 
 
-@login_required
+@staff_member_required
 def edit_student(request, id):
     obj = Student.objects.get(id=id)
     if request.method == 'GET':
@@ -98,7 +100,7 @@ def edit_student(request, id):
         return redirect('students')
 
 
-@login_required
+@staff_member_required
 def delete_student(request, id=None):
     obj = Student.objects.get(id=id)
     if request.method == 'GET':
@@ -125,7 +127,7 @@ def delete_student(request, id=None):
         return redirect('students')
 
 
-@login_required
+@staff_member_required
 def students(request, alert=None):
     try:
         mail_text_obj = Config.objects.get(name='mail_text')
@@ -217,17 +219,6 @@ class mail_thread(Thread):
             mail_text = mail_text.replace('#NAME#', student.firstname)
             mail_text = mail_text.replace('#CODE#', student.code)
 
-            # mail_text = (
-            #     "Hallo " + student.firstname + ",\n\n" +
-            #     "hiermit erhältst du deinen WLAN-Code für das aktuelle Schuljahr. " +
-            #     "Der Code kann nur einmalig auf einem Gerät aktiviert werden, d.h. " +
-            #     "falls du ein Tablet hast, dein Tablet, ansonsten dein Smartphone.\n\n" +
-            #     "Dein Code lautet: \n\n" +
-            #     student.code + "\n\n" +
-            #     "Hinweis: Eine Weitergabe des Codes ist nicht möglich. Falls du einen " +
-            #     "neuen Code brauchst, wird der alte Code deaktiviert. Bei Problemen wendest " +
-            #     "du dich an die Administratoren (LOB/SCL)"
-            # )
             send_mail(
                 'WLAN-CODE',
                 mail_text,
@@ -237,7 +228,7 @@ class mail_thread(Thread):
             )
 
 
-@login_required
+@staff_member_required
 def codedeletion(request):
     if request.method == 'GET':
         try:
@@ -257,7 +248,7 @@ def codedeletion(request):
         return redirect('codedeletion')
 
 
-@login_required
+@staff_member_required
 def student_import(request):
     if request.method == 'GET':
         return render(request, 'student_import.html', {})

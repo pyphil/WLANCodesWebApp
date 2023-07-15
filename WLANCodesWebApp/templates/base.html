@@ -17,7 +17,7 @@
   <div class="container">
     {% load static %}
 
-  <img src="{% static 'images/GNM.png' %}" width="40" class="ms-3"> <a class="navbar-brand ps-3 mb-0 h1" href="">GENM WLAN Codes WebApp</a>
+  <img src="{% static 'images/GNM.png' %}" width="40" class="ms-3"> <a class="navbar-brand ps-3 mb-0 h1" href="/">GENM WLAN Codes WebApp</a>
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
       aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,6 +29,8 @@
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="/accounts/logout/">Logout ({{ user.username }})</a>
           </li>
+        {% endif %}
+        {% if user.is_staff %}
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="{% url 'codes' %}">Codeausgabe</a>
           </li>
@@ -42,15 +44,10 @@
             <a class="nav-link active" aria-current="page" href="{% url 'codedeletion' %}">Löschliste</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/admin/">Admin</a>
-          </li>
-        {% else %}
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/accounts/login/?next={{ request.get_full_path|urlencode }}">Admin-Login</a>
+            <a class="nav-link active" aria-current="page" href="/admin/">Django-Admin</a>
           </li>
         {% endif %}
       </ul>
-      
     </div>
   </div>
 </nav>

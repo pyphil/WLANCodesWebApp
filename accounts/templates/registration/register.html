@@ -1,0 +1,46 @@
+{% extends 'base.html' %}  
+{% block content %}
+
+<form method="post">
+  {% csrf_token %}
+  <div class="row justify-content-center">
+    <div class="card shadow" style="width: 800px;">
+      <div class="card-body">
+        <h4 class="mb-4">Registrieren</h4>
+        {% if link_error %} 
+          <div class="alert alert-danger">
+            Dieser Link ist kein gültiger Registrierungslink.
+          </div>
+        {% else %}
+          <form method="POST">
+            {% if form.errors %} 
+              <div class="alert alert-danger">
+                {% for field in form %} 
+                  {% for error in field.errors %}
+                    <strong>{{ error|escape }}</strong><br>
+                  {% endfor %} 
+                {% endfor %} 
+              </div>
+            {% endif %}
+
+            <p>Benutzername (frei wählbar, z.B. vorname.nachname): {{ form.username }}</p>
+            <p>E-Mail: 
+              <input type="email" name="email" class="form-control" required="" id="id_email" value="{{ user_email }}" readonly>
+            </p>
+            {% if email_error %}
+              <div class="alert alert-danger">
+                <strong>Diese E-Mail-Adresse ist keine gültige Dienstmailadresse.</strong>
+              </div>
+            {% endif %}
+            <p>Passwort (mind. 8 Zeichen): {{ form.password1 }}</p>
+            <p>Wiederholung Passwort: {{ form.password2 }}</p>
+            <button type="submit" class="btn btn-primary mt-2">Registrieren</button>
+            <a href="{% url 'codes' %}" class="btn btn-secondary mt-2">Abbrechen</a>
+          </form>
+          {% endif %}
+      </div>
+    </div>
+  </div>
+</form>
+
+{% endblock content %}

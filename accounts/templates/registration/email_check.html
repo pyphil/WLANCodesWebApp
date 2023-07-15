@@ -1,0 +1,28 @@
+{% extends 'base.html' %}  
+{% block content %}
+
+<form method="post">
+  {% csrf_token %}
+  <div class="row justify-content-center">
+    <div class="card shadow" style="width: 800px;">
+      <div class="card-body">
+        <h4 class="mb-4">Registrierung</h4>
+        <form method="POST">
+          <p>Bitte gib hier deine Dienstmailadresse an. Im ersten Schritt überprüfen wir, ob es sich 
+            um eine gültige Dienstmail-Adresse handelt und senden dir einen Link zur Registrierung.
+          </p>
+          <p>E-Mail (nur Dienstmail-Adressen): <input class="form-control" name="mail"></p>
+          {% if email_error %}
+            <div class="alert alert-danger">
+              <strong>Diese E-Mail-Adresse ist keine gültige Dienstmailadresse.</strong>
+            </div>
+          {% endif %}
+          <button type="submit" class="btn btn-primary mt-2">Absenden</button>
+          <a href="{% url 'codes' %}" class="btn btn-secondary mt-2">Abbrechen</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</form>
+
+{% endblock content %}
