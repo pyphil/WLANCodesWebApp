@@ -44,6 +44,9 @@ def register(request, uuid):
         else:
             email_error = True
 
+    else:
+        form = RegisterUserForm()
+    
     # check if user email is authorized
     try:
         u = Profile.objects.get(uuid=uuid)
@@ -51,9 +54,8 @@ def register(request, uuid):
     except Profile.DoesNotExist:
         link_error = True
 
-    form = RegisterUserForm()
     return render(request, 'registration/register.html', {
-        'form': form, 
+        'form': form,
         'user_email': user_email, 
         'link_error': link_error,
         'email_error': email_error})
