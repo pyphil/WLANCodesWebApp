@@ -102,15 +102,6 @@ def edit_student(request, id):
 
 @staff_member_required
 def delete_student(request, id=None):
-    obj = Student.objects.get(id=id)
-    if request.method == 'GET':
-        context = {
-            'name': obj.name,
-            'firstname': obj.firstname,
-            'group': obj.group,
-            'student_id': obj.id,
-        }
-        return render(request, 'delete_student.html', context)
     if request.method == 'POST':
         if request.POST.get('delete'):
             del_obj = Student.objects.get(id=int(request.POST.get('delete')))
@@ -124,7 +115,23 @@ def delete_student(request, id=None):
                     group=del_obj.group
                 )
             del_obj.delete()
+        if request.POST.get('delete_all'):
+            # Delete all students
+            Student.objects.all().delete()
         return redirect('students')
+
+    if id == 'all':
+        # render ohne context aber alert "Sicher dass alle gelöscht werden sollen.. Keine Löschliste..."
+        return render(request, 'delete_student.html', {'alert_delete_all': True})
+    else:
+        obj = Student.objects.get(id=id)
+        context = {
+            'name': obj.name,
+            'firstname': obj.firstname,
+            'group': obj.group,
+            'student_id': obj.id,
+        }
+        return render(request, 'delete_student.html', context)
 
 
 @staff_member_required
@@ -133,32 +140,6 @@ def students(request, alert=None):
         mail_text_obj = Config.objects.get(name='mail_text')
     except Config.DoesNotExist:
         mail_text_obj = Config.objects.create(name='mail_text', setting='mail_text')
-
-    if request.method == 'GET':
-        remaining_year = len(Code.objects.filter(type='y', duration=1))
-        mail_form = MailForm(instance=mail_text_obj)
-        if request.GET.get('search') is not None:
-            searchterm = str(request.GET.get('search'))
-            students = (
-                Student.objects.filter(name__icontains=searchterm) |
-                Student.objects.filter(firstname__icontains=searchterm) |
-                Student.objects.filter(code__icontains=searchterm)
-            )
-        elif request.GET.get('sort') == 'date':
-            students = Student.objects.all().order_by('-date')
-        elif request.GET.get('sort') == 'code':
-            students = Student.objects.all().order_by('code')
-        else:
-            students = Student.objects.all().order_by('group', 'name')
-        print(remaining_year)
-        return render(request, 'students.html', {
-            'students': students,
-            'alert': alert,
-            'mail_form': mail_form,
-            'remaining_year': remaining_year,
-            'search_string': request.GET.get('search'),
-            }
-        )
 
     if request.method == 'POST':
         if request.POST.get('checked'):
@@ -179,14 +160,51 @@ def students(request, alert=None):
             thread = mail_thread(student_ids)
             thread.start()
 
+        if request.POST.get('send_all'):
+            # Send a code to all students in the database
+            students = Student.objects.all()
+            student_ids = []
+            for student in students:
+                student_ids.append(student.id)
+            alert = 1
+            thread = mail_thread(student_ids)
+            thread.start()
+
         if request.POST.get('save_mail_text'):
             mail_form = MailForm(request.POST, instance=mail_text_obj)
             alert = 0
             if mail_form.is_valid():
                 mail_form.save()
 
-        # return redirect('students', alert=alert)
-        return redirect('/students/' + str(alert) + '?search=' + str(request.GET.get('search')))
+        if request.GET.get('search'):
+            return redirect('/students/' + str(alert) + '?search=' + str(request.GET.get('search')))
+        else:
+            return redirect('/students/' + str(alert))
+
+    remaining_year = len(Code.objects.filter(type='y', duration=1))
+    mail_form = MailForm(instance=mail_text_obj)
+    if request.GET.get('search') is not None:
+        searchterm = str(request.GET.get('search'))
+        students = (
+            Student.objects.filter(name__icontains=searchterm) |
+            Student.objects.filter(firstname__icontains=searchterm) |
+            Student.objects.filter(code__icontains=searchterm)
+        )
+    elif request.GET.get('sort') == 'date':
+        students = Student.objects.all().order_by('-date')
+    elif request.GET.get('sort') == 'code':
+        students = Student.objects.all().order_by('code')
+    else:
+        students = Student.objects.all().order_by('group', 'name')
+
+    return render(request, 'students.html', {
+        'students': students,
+        'alert': alert,
+        'mail_form': mail_form,
+        'remaining_year': remaining_year,
+        'search_string': request.GET.get('search'),
+        }
+    )
 
 
 class mail_thread(Thread):

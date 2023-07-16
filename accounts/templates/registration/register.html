@@ -23,10 +23,10 @@
               </div>
             {% endif %}
 
-            <p>Benutzername (frei wählbar, z.B. vorname.nachname): {{ form.username }}</p>
             <p>E-Mail: 
-              <input type="email" name="email" class="form-control" required="" id="id_email" value="{{ user_email }}" readonly>
+              <input type="email" name="email" class="form-control" required="" id="id_email" value="{{ user_email }}" disabled>
             </p>
+            <p>Benutzername (frei wählbar, z.B. vorname.nachname): {{ form.username }}</p>
             {% if email_error %}
               <div class="alert alert-danger">
                 <strong>Diese E-Mail-Adresse ist keine gültige Dienstmailadresse.</strong>

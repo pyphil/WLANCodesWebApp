@@ -1,12 +1,22 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1>Delete Student:</h1>
-<form method="post">
+<h1>Schüler:innen löschen:</h1>
+  <form method="post">
     {% csrf_token %}
-    Soll folgender Datensatz gelöscht werden?: <br>
-    {{ name }}, {{ firstname }}, {{ group }}
-    <button type="submit" name="delete" value="{{ student_id }}" class="btn btn-danger">Löschen</button>
-</form>
+    {% if alert_delete_all %}
+      <div class="alert alert-danger">
+        Bei dieser Aktion werden alle Datensätze gelöscht. Die Codes werden dabei nicht auf die 
+        Löschliste gesetzt, da davon ausgegangen wird, dass der Controller komplett bereinigt wird.<br><br>
+        <strong>Sicher, dass alle Datensätze gelöscht werden sollen?</strong>
+      </div>
+      <button type="submit" name="delete_all" value="delete_all" class="btn btn-danger">Löschen</button>
+    {% else %}
+      <p>Soll folgender Datensatz gelöscht werden?:</p>
+      <p>{{ name }}, {{ firstname }}, {{ group }}</p>
+      <button type="submit" name="delete" value="{{ student_id }}" class="btn btn-danger">Löschen</button>
+    {% endif %}
+      <a href="javascript:history.back()" class="btn btn-secondary">Abbrechen</a>
+  </form>
 
 {% endblock content %}
