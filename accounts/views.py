@@ -13,7 +13,7 @@ def email_check(request):
     if request.method == 'POST':
         entered_email = request.POST.get('mail')
         allowed_emails = AllowedEmail.objects.get(school="genm")
-        if '@' in entered_email and entered_email in allowed_emails.emails:
+        if '@' in entered_email and entered_email.casefold() in allowed_emails.emails.casefold():
             newuuid = uuid4().hex
             Profile.objects.create(
                 user_email=entered_email,
