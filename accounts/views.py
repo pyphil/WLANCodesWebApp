@@ -37,12 +37,12 @@ def register(request, uuid):
     if request.method == "POST":
         form = RegisterUserForm(request.POST)
         allowed_emails = AllowedEmail.objects.get(school="genm")
-        if request.POST.get('email') in allowed_emails.emails:
-            if form.is_valid():
-                form.save()
-                return redirect('account_success')
-        else:
-            email_error = True
+        # if request.POST.get('email') in allowed_emails.emails:
+        if form.is_valid():
+            form.save()
+            return redirect('account_success')
+        # else:
+            # email_error = True
 
     else:
         form = RegisterUserForm()
