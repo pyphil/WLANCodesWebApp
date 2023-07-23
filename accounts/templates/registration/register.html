@@ -24,7 +24,7 @@
             {% endif %}
 
             <p>E-Mail: 
-              <input type="email" name="email" class="form-control" required="" id="id_email" value="{{ user_email }}" disabled>
+              <input type="email" name="email" class="form-control" required="" id="id_email" value="{{ user_email }}" readonly>
             </p>
             <p>Benutzername (frei wählbar, z.B. vorname.nachname): {{ form.username }}</p>
             {% if email_error %}
