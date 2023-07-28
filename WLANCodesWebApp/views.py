@@ -4,9 +4,11 @@ from .forms import StudentForm, MailForm
 from datetime import datetime
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from threading import Thread
 
 
+@login_required
 def codes(request):
     # Zugriff nur mit access key in production
     if not request.session.get('has_access'):
@@ -73,7 +75,7 @@ def codes(request):
         return render(request, 'codes.html', context)
 
 
-@login_required
+@staff_member_required
 def new_student(request):
     if request.method == 'GET':
         f = StudentForm()
@@ -85,7 +87,7 @@ def new_student(request):
         return redirect('codes')
 
 
-@login_required
+@staff_member_required
 def edit_student(request, id):
     obj = Student.objects.get(id=id)
     if request.method == 'GET':
@@ -98,17 +100,8 @@ def edit_student(request, id):
         return redirect('students')
 
 
-@login_required
+@staff_member_required
 def delete_student(request, id=None):
-    obj = Student.objects.get(id=id)
-    if request.method == 'GET':
-        context = {
-            'name': obj.name,
-            'firstname': obj.firstname,
-            'group': obj.group,
-            'student_id': obj.id,
-        }
-        return render(request, 'delete_student.html', context)
     if request.method == 'POST':
         if request.POST.get('delete'):
             del_obj = Student.objects.get(id=int(request.POST.get('delete')))
@@ -122,41 +115,31 @@ def delete_student(request, id=None):
                     group=del_obj.group
                 )
             del_obj.delete()
+        if request.POST.get('delete_all'):
+            # Delete all students
+            Student.objects.all().delete()
         return redirect('students')
 
+    if id == 'all':
+        # render ohne context aber alert "Sicher dass alle gelöscht werden sollen.. Keine Löschliste..."
+        return render(request, 'delete_student.html', {'alert_delete_all': True})
+    else:
+        obj = Student.objects.get(id=id)
+        context = {
+            'name': obj.name,
+            'firstname': obj.firstname,
+            'group': obj.group,
+            'student_id': obj.id,
+        }
+        return render(request, 'delete_student.html', context)
 
-@login_required
+
+@staff_member_required
 def students(request, alert=None):
     try:
         mail_text_obj = Config.objects.get(name='mail_text')
     except Config.DoesNotExist:
         mail_text_obj = Config.objects.create(name='mail_text', setting='mail_text')
-
-    if request.method == 'GET':
-        remaining_year = len(Code.objects.filter(type='y', duration=1))
-        mail_form = MailForm(instance=mail_text_obj)
-        if request.GET.get('search') is not None:
-            searchterm = str(request.GET.get('search'))
-            students = (
-                Student.objects.filter(name__icontains=searchterm) |
-                Student.objects.filter(firstname__icontains=searchterm) |
-                Student.objects.filter(code__icontains=searchterm)
-            )
-        elif request.GET.get('sort') == 'date':
-            students = Student.objects.all().order_by('-date')
-        elif request.GET.get('sort') == 'code':
-            students = Student.objects.all().order_by('code')
-        else:
-            students = Student.objects.all().order_by('group', 'name')
-        print(remaining_year)
-        return render(request, 'students.html', {
-            'students': students,
-            'alert': alert,
-            'mail_form': mail_form,
-            'remaining_year': remaining_year,
-            'search_string': request.GET.get('search'),
-            }
-        )
 
     if request.method == 'POST':
         if request.POST.get('checked'):
@@ -177,14 +160,51 @@ def students(request, alert=None):
             thread = mail_thread(student_ids)
             thread.start()
 
+        if request.POST.get('send_all'):
+            # Send a code to all students in the database
+            students = Student.objects.all()
+            student_ids = []
+            for student in students:
+                student_ids.append(student.id)
+            alert = 1
+            thread = mail_thread(student_ids)
+            thread.start()
+
         if request.POST.get('save_mail_text'):
             mail_form = MailForm(request.POST, instance=mail_text_obj)
             alert = 0
             if mail_form.is_valid():
                 mail_form.save()
 
-        # return redirect('students', alert=alert)
-        return redirect('/students/' + str(alert) + '?search=' + str(request.GET.get('search')))
+        if request.GET.get('search'):
+            return redirect('/students/' + str(alert) + '?search=' + str(request.GET.get('search')))
+        else:
+            return redirect('/students/' + str(alert))
+
+    remaining_year = len(Code.objects.filter(type='y', duration=1))
+    mail_form = MailForm(instance=mail_text_obj)
+    if request.GET.get('search') is not None:
+        searchterm = str(request.GET.get('search'))
+        students = (
+            Student.objects.filter(name__icontains=searchterm) |
+            Student.objects.filter(firstname__icontains=searchterm) |
+            Student.objects.filter(code__icontains=searchterm)
+        )
+    elif request.GET.get('sort') == 'date':
+        students = Student.objects.all().order_by('-date')
+    elif request.GET.get('sort') == 'code':
+        students = Student.objects.all().order_by('code')
+    else:
+        students = Student.objects.all().order_by('group', 'name')
+
+    return render(request, 'students.html', {
+        'students': students,
+        'alert': alert,
+        'mail_form': mail_form,
+        'remaining_year': remaining_year,
+        'search_string': request.GET.get('search'),
+        }
+    )
 
 
 class mail_thread(Thread):
@@ -217,17 +237,6 @@ class mail_thread(Thread):
             mail_text = mail_text.replace('#NAME#', student.firstname)
             mail_text = mail_text.replace('#CODE#', student.code)
 
-            # mail_text = (
-            #     "Hallo " + student.firstname + ",\n\n" +
-            #     "hiermit erhältst du deinen WLAN-Code für das aktuelle Schuljahr. " +
-            #     "Der Code kann nur einmalig auf einem Gerät aktiviert werden, d.h. " +
-            #     "falls du ein Tablet hast, dein Tablet, ansonsten dein Smartphone.\n\n" +
-            #     "Dein Code lautet: \n\n" +
-            #     student.code + "\n\n" +
-            #     "Hinweis: Eine Weitergabe des Codes ist nicht möglich. Falls du einen " +
-            #     "neuen Code brauchst, wird der alte Code deaktiviert. Bei Problemen wendest " +
-            #     "du dich an die Administratoren (LOB/SCL)"
-            # )
             send_mail(
                 'WLAN-CODE',
                 mail_text,
@@ -237,7 +246,7 @@ class mail_thread(Thread):
             )
 
 
-@login_required
+@staff_member_required
 def codedeletion(request):
     if request.method == 'GET':
         try:
@@ -257,7 +266,7 @@ def codedeletion(request):
         return redirect('codedeletion')
 
 
-@login_required
+@staff_member_required
 def student_import(request):
     if request.method == 'GET':
         return render(request, 'student_import.html', {})
