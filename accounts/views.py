@@ -1,5 +1,5 @@
 from django.shortcuts import redirect, render
-from .models import Profile
+from .models import RegistrationID
 from WLANCodesWebApp.models import Config, AllowedEmail
 from .forms import RegisterUserForm
 from uuid import uuid4
@@ -15,7 +15,7 @@ def email_check(request):
         allowed_emails = AllowedEmail.objects.get(school="genm")
         if '@' in entered_email and entered_email.casefold() in allowed_emails.emails.casefold():
             newuuid = uuid4().hex
-            Profile.objects.create(
+            RegistrationID.objects.create(
                 user_email=entered_email,
                 uuid=newuuid,
             )
@@ -36,29 +36,36 @@ def register(request, uuid):
     link_error = False
     if request.method == "POST":
         form = RegisterUserForm(request.POST)
+        # check email again just to make sure
         allowed_emails = AllowedEmail.objects.get(school="genm")
-        # if request.POST.get('email') in allowed_emails.emails:
-        if form.is_valid():
-            form.save()
-            return redirect('account_success')
-        # else:
-            # email_error = True
+        if '@' in request.POST.get('email') and request.POST.get('email').casefold() in allowed_emails.emails.casefold():
+            if form.is_valid():
+                form.save()
+                # delete uuid entry
+                u = RegistrationID.objects.get(uuid=uuid)
+                u.delete()
+                return redirect('account_success')
+        else:
+            email_error = True
 
     else:
         form = RegisterUserForm()
-    
+
     # check if user email is authorized
     try:
-        u = Profile.objects.get(uuid=uuid)
+        u = RegistrationID.objects.get(uuid=uuid)
         user_email = u.user_email
-    except Profile.DoesNotExist:
+    except RegistrationID.DoesNotExist:
+        user_email = None
         link_error = True
 
     return render(request, 'registration/register.html', {
         'form': form,
-        'user_email': user_email, 
+        'user_email': user_email,
         'link_error': link_error,
-        'email_error': email_error})
+        'email_error': email_error
+        }
+    )
 
 
 def registration_email(request):
@@ -67,19 +74,6 @@ def registration_email(request):
 
 def account_success(request):
     return render(request, 'registration/account_success.html', {})
-
-
-def confirm_email(request, uuid):
-    # set user active:
-    error = False
-    try:
-        u = User.objects.get(profile__uuid=uuid)
-        u.is_active = True
-        u.save()
-    except User.DoesNotExist:
-        error = True
-
-    return render(request, 'registration/email_success.html', {'error': error})
 
 
 class mail_thread(Thread):
