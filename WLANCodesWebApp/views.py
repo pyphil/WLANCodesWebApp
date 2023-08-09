@@ -141,6 +141,9 @@ def students(request, alert=None):
     except Config.DoesNotExist:
         mail_text_obj = Config.objects.create(name='mail_text', setting='mail_text')
 
+    # check remaining codes
+    remaining_year = len(Code.objects.filter(type='y', duration=1))
+
     if request.method == 'POST':
         if request.POST.get('checked'):
             # put checked students in a list
@@ -148,17 +151,25 @@ def students(request, alert=None):
             if student_ids == []:
                 alert = 0
             else:
+                # check number of codes
+                if remaining_year >= len(student_ids):
+                    alert = 1
+                    thread = mail_thread(student_ids)
+                    thread.start()
+                else:
+                    alert = 2
+
+        if request.POST.get('send'):
+            # check number of codes
+            if remaining_year > 0:
+                # put one student in a list
+                student_ids = []
+                student_ids.append(request.POST.get('send'))
                 alert = 1
                 thread = mail_thread(student_ids)
                 thread.start()
-
-        if request.POST.get('send'):
-            # put one student in a list
-            student_ids = []
-            student_ids.append(request.POST.get('send'))
-            alert = 1
-            thread = mail_thread(student_ids)
-            thread.start()
+            else:
+                alert = 2
 
         if request.POST.get('send_all'):
             # Send a code to all students in the database
@@ -166,9 +177,13 @@ def students(request, alert=None):
             student_ids = []
             for student in students:
                 student_ids.append(student.id)
-            alert = 1
-            thread = mail_thread(student_ids)
-            thread.start()
+            # check number of codes
+            if remaining_year >= len(student_ids):
+                alert = 1
+                thread = mail_thread(student_ids)
+                thread.start()
+            else:
+                alert = 2
 
         if request.POST.get('save_mail_text'):
             mail_form = MailForm(request.POST, instance=mail_text_obj)
@@ -181,7 +196,6 @@ def students(request, alert=None):
         else:
             return redirect('/students/' + str(alert))
 
-    remaining_year = len(Code.objects.filter(type='y', duration=1))
     mail_form = MailForm(instance=mail_text_obj)
     if request.GET.get('search') is not None:
         searchterm = str(request.GET.get('search'))
