@@ -61,9 +61,14 @@ tbody td {
     </div>
   </div>
 </form>
-{% if alert == 1%}
+{% if alert == 1 %}
   <div class="alert alert-info" role="alert">
     Der Versand der Codes läuft im Hintergrund. Um den Fortschritt hier zu sehen, muss die Seite gelegentlich neu geladen werden.
+  </div>
+{% endif %}
+{% if alert == 2 %}
+  <div class="alert alert-danger" role="alert">
+    Es sind nicht genügend Codes vorrätig, um diese Aktion auszuführen!
   </div>
 {% endif %}
 <form method="post">
