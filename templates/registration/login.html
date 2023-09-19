@@ -10,7 +10,7 @@
         <h2 class="mb-4">Login</h2>
           <p>
           <label for="id_username" class="form-label">Benutzername:</label>
-          <input type="text" class="form-control" name="username" autofocus autocomplete="username" id="id_username">
+          <input type="text" onchange="this.value=this.value.toLowerCase()" class="form-control" name="username" autofocus autocomplete="username" id="id_username">
         </p>
         <p>
           <label for="id_password" class="form-label">Passwort:</label>
