@@ -12,9 +12,17 @@
             um eine gültige Dienstmail-Adresse handelt und senden dir einen Link zur Registrierung.
           </p>
           <p>E-Mail (nur Dienstmail-Adressen): <input class="form-control" name="mail"></p>
-          {% if email_error %}
+          {% if email_error == "not_allowed" %}
             <div class="alert alert-danger">
               <strong>Diese E-Mail-Adresse ist keine gültige Dienstmailadresse.</strong>
+            </div>
+          {% endif %}
+          {% if email_error == "already_used" %}
+            <div class="alert alert-danger">
+              <strong>
+                Diese Dienstmailadresse wurde bereits für ein Konto genutzt. Nutze die Funktion<br>
+                <i><a href="{% url 'password_reset' %}">Passwort oder Benutzernamen vergessen?</a></i>
+              </strong>
             </div>
           {% endif %}
           <button type="submit" class="btn btn-primary mt-2">Absenden</button>

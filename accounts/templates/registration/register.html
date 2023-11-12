@@ -26,10 +26,18 @@
             <p>E-Mail: 
               <input type="email" name="email" class="form-control" required="" id="id_email" value="{{ user_email }}" readonly>
             </p>
-            <p>Benutzername (frei wählbar, z.B. vorname.nachname): {{ form.username }}</p>
-            {% if email_error %}
+            <p>Benutzername (frei wählbar, z.B. vorname.nachname, Kürzel oder E-Mail): {{ form.username }}</p>
+            {% if email_error == "not_allowed" %}
               <div class="alert alert-danger">
                 <strong>Diese E-Mail-Adresse ist keine gültige Dienstmailadresse.</strong>
+              </div>
+            {% endif %}
+            {% if email_error == "already_used" %}
+              <div class="alert alert-danger">
+                <strong>
+                  Diese Dienstmailadresse wurde bereits für ein Konto genutzt. Nutze die Funktion<br>
+                  <i><a href="{% url 'password_reset' %}">Passwort oder Benutzernamen vergessen?</a></i>
+                </strong>
               </div>
             {% endif %}
             <p>Passwort (mind. 8 Zeichen): {{ form.password1 }}</p>
