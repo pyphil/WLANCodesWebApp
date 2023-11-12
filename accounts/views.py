@@ -1,11 +1,12 @@
 from django.shortcuts import redirect, render
+from django.contrib.auth import login
 from .models import RegistrationID
 from WLANCodesWebApp.models import Config, AllowedEmail
 from .forms import RegisterUserForm
 from uuid import uuid4
-from django.contrib.auth.models import User
 from threading import Thread
 from django.core.mail import send_mail
+from django.contrib.auth.decorators import login_required
 
 
 def email_check(request):
@@ -74,6 +75,17 @@ def registration_email(request):
 
 def account_success(request):
     return render(request, 'registration/account_success.html', {})
+
+
+@login_required
+def change_user(request):
+    form = RegisterUserForm(request.POST or None, instance=request.user)
+    if form.is_valid():
+        form.save()
+        # user will be logged out automatically, so log user in again:
+        login(request, request.user)
+        return redirect('codes')
+    return render(request, 'registration/change_user.html', {'form': form})
 
 
 class mail_thread(Thread):

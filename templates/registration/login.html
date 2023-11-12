@@ -10,7 +10,7 @@
         <h2 class="mb-4">Login</h2>
           <p>
           <label for="id_username" class="form-label">Benutzername:</label>
-          <input type="text" class="form-control" name="username" autofocus autocomplete="username" id="id_username">
+          <input type="text" onchange="this.value=this.value.toLowerCase()" class="form-control" name="username" autofocus autocomplete="username" id="id_username">
         </p>
         <p>
           <label for="id_password" class="form-label">Passwort:</label>
@@ -20,8 +20,9 @@
           <button type="submit" class="btn btn-primary mt-3 mb-2">Anmelden</button>
           <p class="mt-3">
             <i><a href="{% url 'email_check' %}">Registrieren</a></i>
-            &nbsp; &nbsp; &nbsp;
-            <i><a href="{% url 'password_reset' %}">Passwort vergessen?</a></i>
+          </p>
+          <p class="mt-3">
+            <i><a href="{% url 'password_reset' %}">Passwort oder Benutzernamen vergessen?</a></i>
           </p>
           {% if form.errors %}
             <div class="alert alert-danger mt-3">

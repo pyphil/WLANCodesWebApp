@@ -19,5 +19,6 @@ class RegisterUserForm(UserCreationForm):
         super(RegisterUserForm, self).__init__(*args, **kwargs)
 
         self.fields['username'].widget.attrs['class'] = 'form-control'
+        self.fields['username'].widget.attrs['onchange'] = "this.value=this.value.toLowerCase()"
         self.fields['password1'].widget.attrs['class'] = 'form-control'
         self.fields['password2'].widget.attrs['class'] = 'form-control'

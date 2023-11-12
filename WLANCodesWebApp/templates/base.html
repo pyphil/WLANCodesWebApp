@@ -32,24 +32,27 @@
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           {% if user.is_authenticated %}
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/accounts/logout/">Logout ({{ user.username }})</a>
+              <a class="nav-link active" style="color: #0d6efd;" href="/accounts/logout/"><strong><i class="bi bi-person-circle"></i> Logout ({{ user.username }})</strong></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if request.path == '/accounts/change_user/' %}active{% endif %}" href="/accounts/change_user/"><i class="bi bi-gear-fill"></i> Konto verwalten</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="/"><i class="bi bi-router-fill"></i> Codeausgabe</a>
             </li>
           {% endif %}
           {% if user.is_staff %}
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="{% url 'codes' %}">Codeausgabe</a>
+              <a class="nav-link {% if request.path == '/students/' %}active{% endif %}" href="/students/">SII-Codes</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="{% url 'students' %}">SII-Codes</a>
+              <a class="nav-link {% if request.path == '/codeimport/' %}active{% endif %}" href="/codeimport/">Codeimport</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="{% url 'codeimport' %}">Codeimport</a>
+              <a class="nav-link {% if request.path == '/codedeletion/' %}active{% endif %}" href="/codedeletion/">Löschliste</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="{% url 'codedeletion' %}">Löschliste</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/admin/">Django-Admin</a>
+              <a class="nav-link" href="/admin/">Django-Admin</a>
             </li>
           {% endif %}
         </ul>
