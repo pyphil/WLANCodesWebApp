@@ -18,46 +18,30 @@
               </div>
             {% endif %}
 
-            <tr>
-              <th><label for="id_username">Benutzername:</label></th>
-              <td>
-                
-                <input type="text" name="username" value="{{ form.username.value }}" maxlength="150" autofocus class="form-control" onchange="this.value=this.value.toLowerCase()" required id="id_username">
-                
-              </td>
-            </tr>
-          
-            <tr>
-              <th><label for="id_email">Email:</label></th>
-              <td>
-                
-                <input type="email" name="email" value="{{ form.email.value }}" class="form-control" required id="id_email">
-                
-                
-              </td>
-            </tr>
-          
-            <tr>
-              <th><label for="id_password1">Passwort:</label></th>
-              <td>
-                <input type="password" name="password1" class="form-control" required id="id_password1">
-              </td>
-            </tr>
-          
-            <tr>
-              <th><label for="id_password2">Passwort bestätigen:</label></th>
-              <td>
-                <input type="password" name="password2" class="form-control" required id="id_password2">
-                <br>
-                  <span class="helptext"><ul><li>Das Passwort darf nicht zu ähnlich zu anderen persönlichen Informationen sein.</li>
-                    <li>Das Passwort muss mindestens 8 Zeichen enthalten.</li>
-                    <li>Das Passwort darf nicht allgemein üblich sein.</li>
-                    <li>Das Passwort darf nicht komplett aus Ziffern bestehen.</li>
-                  </ul>
-                </span>
-              </td>
-            </tr>
-            <button class="btn btn-primary">Speichern</button>
+            {% if success %}
+              <div class="alert alert-success">
+                Der Benutzername wurde geändert.
+              </div>
+            {% endif %}
+
+            <!-- <label for="id_username">Benutzername:</label>
+            <input type="text" name="username" value="{{ form.username.value }}" maxlength="150" autofocus class="form-control" onchange="this.value=this.value.toLowerCase()" required id="id_username">
+
+            <button class="btn btn-primary">Speichern</button></p> -->
+            <label for="id_username">Benutzername:</label>
+            <div class="row">
+              <div class="col pe-2">
+                  <input type="text" name="username" value="{{ form.username.value }}" maxlength="150" autofocus class="form-control" onchange="this.value=this.value.toLowerCase()" required id="id_username">
+              </div>
+              <div class="col-auto ps-2">
+                  <button type="submit" class="btn btn-primary">Speichern</button>
+              </div>
+            </div>
+            <br>
+            <label for="id_username">Passwort:</label>
+            <br>
+            <a href="/accounts/password_reset/" class="btn btn-primary"><i class="bi bi-arrow-right-square">&nbsp;</i> Passwort ändern</a>
+
       </div>
     </div>
   </div>
