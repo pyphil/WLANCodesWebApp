@@ -50,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'WLANCodesWebApp_site.middleware.login_rate_limiter.LoginRateLimiterMiddleware',
 ]
 
 ROOT_URLCONF = 'WLANCodesWebApp_site.urls'

@@ -309,3 +309,7 @@ def student_import(request):
                     student.save()
 
         return redirect('students')
+
+
+def rate_limit_exceeded_view(request):
+    return render(request, 'rate_limit_exceeded.html')

@@ -10,4 +10,5 @@ urlpatterns = [
     path('students/<int:alert>', views.students, name='students'),
     path('student_import/', views.student_import, name='student_import'),
     path('codedeletion/', views.codedeletion, name='codedeletion'),
+    path('rate-limit-exceeded/', views.rate_limit_exceeded_view, name='rate_limit_exceeded'),
 ]
